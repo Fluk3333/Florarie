@@ -1,4 +1,5 @@
 namespace Florarie;
+
 public enum StatusComandaBuchet
 {
     InPreluare,

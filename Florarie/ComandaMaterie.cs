@@ -1,4 +1,5 @@
 namespace Florarie;
+
 public enum StatusComanda
 {
     InAsteptare,
