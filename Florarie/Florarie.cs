@@ -43,7 +43,7 @@ public class Florarie
         ComenziMaterie.Add(new ComandaMaterie { CodUnic = "1", Descriere = "Flori de trandafir", CodUnicMaterie = "123", Status = StatusComanda.InAsteptare });
         ComenziMaterie.Add(new ComandaMaterie { CodUnic = "2", Descriere = "Frunze de ferigă", CodUnicMaterie = "456", Status = StatusComanda.Finalizat });
     }
-     public void MeniuNeautentificat()
+    public void MeniuNeautentificat()
     {
         Console.WriteLine("\n[1] Logare\n[2] Adauga Utilizator\n[3] Iesire\n");
         Console.Write("Alege o optiune: ");
@@ -245,6 +245,55 @@ public class Florarie
             Console.WriteLine("Comanda de materie nu exista sau este deja finalizata.");
         }
     }
+    public void PreluareComandaBuchet()
+    {
+        Console.WriteLine("Selecteaza comanda de buchet de preluat:"); //bug si aici
+        foreach (var comanda in Comenzi.Where(c => c.Status == StatusComandaBuchet.InPreluare))
+        {
+            Console.WriteLine($"- {comanda.CodUnic}: {comanda.Descriere}");
+        }
+        var codUnicComanda = Console.ReadLine();
+        var comandaBuchet = Comenzi.FirstOrDefault(c => c.CodUnic == codUnicComanda && c.Status == StatusComandaBuchet.InPreluare);
+
+        if (comandaBuchet != null)
+        {
+            comandaBuchet.Status = StatusComandaBuchet.AsteptareMaterie;
+            Console.WriteLine("Comanda de buchet preluata.");
+        }
+        else
+        {
+            Console.WriteLine("Nu exista comenzi de buchet in asteptare.");
+        }
+    }
+    public void FinalizareComanda()
+    {
+        Console.WriteLine("Selecteaza comanda de buchet de finalizat:");
+        var comanda = Comenzi.FirstOrDefault(c => c.Status == StatusComandaBuchet.InLucru);
+
+        if (comanda != null)
+        {
+            if (ComenziMaterie.All(cm => cm.Status == StatusComanda.Finalizat))
+            {
+                comanda.Status = StatusComandaBuchet.Finalizat;
+                Console.WriteLine("Comanda finalizata.");
+            }
+            else
+            {
+                Console.WriteLine("Nu exista materie prima pentru a finaliza comanda.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Nu exista comenzi de buchet in asteptare.");
+        }
+    }
+    public void VizualizareReview()
+    {
+        foreach (var review in Reviews)
+        {
+            Console.WriteLine($"{_utilizatorAutentificat.Nume} {_utilizatorAutentificat.Prenume} a lasat un review de {review.Stele} stele in data de {review.Data}");
+        }
+    }
     public void MeniuClient()
     {
         Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
@@ -263,10 +312,10 @@ public class Florarie
                 VizualizareDetaliiComanda();
                 break;
             case "4":
-                //RidicareComanda();
+                RidicareComanda();
                 break;
             case "5":
-               // ReviewComanda();
+                ReviewComanda();
                 break;
             case "6":
                 _utilizatorAutentificat = null;
@@ -285,8 +334,8 @@ public class Florarie
         var descriere = Console.ReadLine();
         Console.Write("Numarul de telefon: ");
         var numar = Console.ReadLine();
-       // if (ValidareNumarTelefon(numar))
-       // {
+        if (ValidareNumarTelefon(numar))
+        {
             Comenzi.Add(new Comanda
             {
                 CodUnic = $"CMD{Comenzi.Count + 1}",
@@ -297,9 +346,9 @@ public class Florarie
                 Status = StatusComandaBuchet.InPreluare
             });
             Console.WriteLine("Comanda a fost plasata cu succes.");
-       // }
-        //else
-          //  Console.WriteLine("Numar de telefon invalid. Comanda nu a fost plasata.");
+        }
+        else
+            Console.WriteLine("Numar de telefon invalid. Comanda nu a fost plasata.");
     }
     public void VizualizareIstoricComenzi()
     {
@@ -325,5 +374,72 @@ public class Florarie
         {
             Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
         }
+    }
+    public void RidicareComanda()
+    {
+        Console.Write("Introduceti codul unic al comenzii pentru ridicare: ");
+        var codComanda = Console.ReadLine();
+        var comanda = Comenzi.FirstOrDefault(c => c.CodUnic == codComanda && c.Client == _utilizatorAutentificat);
+        if (comanda != null)
+        {
+            if (comanda.Status == StatusComandaBuchet.Finalizat)
+            {
+                comanda.Status = StatusComandaBuchet.Revendicat;
+                Console.WriteLine("Comanda a fost ridicata cu succes.");
+            }
+            else
+            {
+                Console.WriteLine("Comanda nu este finalizata si nu poate fi ridicata.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
+        }
+    }
+    public void ReviewComanda()
+    {
+        Console.Write("Introduceti codul unic al comenzii pentru review: ");
+        var codComanda = Console.ReadLine();
+        var comanda = Comenzi.FirstOrDefault(c => c.CodUnic == codComanda && c.Client == _utilizatorAutentificat);
+        if (comanda != null)
+        {
+            if (comanda.Status == StatusComandaBuchet.Revendicat)
+            {
+                Console.Write("Introduceti numarul de stele (1-5): ");
+                var stele = int.Parse(Console.ReadLine() ?? "0");
+
+                if (stele < 1 || stele > 5)
+                {
+                    Console.WriteLine("Numar de stele invalid.");
+                }
+                else
+                {
+                    Reviews.Add(new Review
+                        {
+                            Stele=stele,
+                            User=_utilizatorAutentificat as Client,
+                            Data=DateTime.Now
+                        });
+                    Console.WriteLine($"Review-ul a fost adaugat: {stele} stele.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Nu puteti adauga un review decat dupa ridicarea comenzii.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
+        }
+    }
+    private static bool ValidareNumarTelefon(string numarTelefon)
+    {
+        if (numarTelefon.Length == 10 && numarTelefon.StartsWith("07") && numarTelefon.All(char.IsDigit))
+        {
+            return true;
+        }
+        return false;
     }
 }
