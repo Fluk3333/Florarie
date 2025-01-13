@@ -140,6 +140,61 @@ public class Florarie
                 break;
         }
     }
+    public void MeniuAutentificat()
+    {
+        Console.WriteLine($"\nBine ai revenit, {_utilizatorAutentificat.Nume} {_utilizatorAutentificat.Prenume}!\n");
+
+        if (_utilizatorAutentificat is Angajat)
+        {
+            MeniuAngajat();
+        }
+        else
+        {
+            MeniuClient();
+        }
+    }
+    public void MeniuAngajat()
+    {
+        Console.WriteLine("[1] Vizualizare comenzi buchete\n[2] Comanda materie pentru buchete\n[3] Preluare materie pentru buchete\n[4] Preluare comanda buchet\n[5] Finalizare comanda buchet\n[6] Vizualizare reviews\n[7] Iesire din cont");
+        Console.Write("Alege o optiune: ");
+        var optiune = Console.ReadLine();
+
+        switch (optiune)
+        {
+            case "1":
+                VizualizareComenzi();
+                break;
+            case "2":
+                ComandaMaterieBuchet();
+                break;
+            case "3":
+                PreluareComandaMaterie();
+                break;
+            case "4":
+                PreluareComandaBuchet();
+                break;
+            case "5":
+                FinalizareComanda();
+                break;
+            case "6":
+                VizualizareReview();
+                break;
+            case "7":
+                _utilizatorAutentificat = null;
+                Console.WriteLine("Te-ai delogat cu succes.");
+                break;
+            default:
+                Console.WriteLine("Optiune invalida!");
+                break;
+        }
+    }
+    public void VizualizareComenzi()
+    {
+        foreach (var comanda in Comenzi)
+        {
+            Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere} - Status: {comanda.Status}");
+        }
+    }
     public void MeniuClient()
     {
         Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
@@ -152,7 +207,7 @@ public class Florarie
                 ComandaBuchet();
                 break;
             case "2":
-              
+                VizualizareIstoricComenzi();
                 break;
             case "3":
                
@@ -195,5 +250,14 @@ public class Florarie
        // }
         //else
           //  Console.WriteLine("Numar de telefon invalid. Comanda nu a fost plasata.");
+    }
+    public void VizualizareIstoricComenzi()
+    {
+        var client = _utilizatorAutentificat as Client;
+        Console.WriteLine("Istoricul comenzilor tale:");
+        foreach (var comanda in Comenzi.Where(c => c.Client == client))
+        {
+            Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere} - Status: {comanda.Status}");
+        }
     }
 }
