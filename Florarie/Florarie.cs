@@ -265,6 +265,28 @@ public class Florarie
             Console.WriteLine("Nu exista comenzi de buchet in asteptare.");
         }
     }
+    public void FinalizareComanda()
+    {
+        Console.WriteLine("Selecteaza comanda de buchet de finalizat:");
+        var comanda = Comenzi.FirstOrDefault(c => c.Status == StatusComandaBuchet.InLucru);
+
+        if (comanda != null)
+        {
+            if (ComenziMaterie.All(cm => cm.Status == StatusComanda.Finalizat))
+            {
+                comanda.Status = StatusComandaBuchet.Finalizat;
+                Console.WriteLine("Comanda finalizata.");
+            }
+            else
+            {
+                Console.WriteLine("Nu exista materie prima pentru a finaliza comanda.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Nu exista comenzi de buchet in asteptare.");
+        }
+    }
     public void MeniuClient()
     {
         Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
