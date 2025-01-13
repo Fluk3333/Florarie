@@ -195,6 +195,56 @@ public class Florarie
             Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere} - Status: {comanda.Status}");
         }
     }
+    public void ComandaMaterieBuchet()
+    {
+        Console.Write("Descriere materie: ");
+        var descriere = Console.ReadLine();
+
+        Console.Write("Cod Unic materie (numai numere): ");
+        var codUnic = Console.ReadLine();
+
+        Console.WriteLine("[1] InAsteptare\n[2] Finalizat");
+        Console.Write("Status comanda materie: ");
+        var statusInput = Console.ReadLine();
+        StatusComanda status = statusInput switch
+        {
+            "1" => StatusComanda.InAsteptare,
+            "2" => StatusComanda.Finalizat,
+            _ => StatusComanda.InAsteptare,
+        };
+
+        ComenziMaterie.Add(new ComandaMaterie
+        {
+            Descriere = descriere,
+            CodUnic = codUnic,
+            Status = status
+        });
+
+        Console.WriteLine("Comanda de materie adaugata cu succes.");
+    }
+    public void PreluareComandaMaterie()
+    {
+        Console.WriteLine("Selecteaza comanda materie de preluat:");
+        foreach (var comanda in ComenziMaterie.Where(c => c.Status == StatusComanda.InAsteptare))
+        {
+            Console.WriteLine($"- {comanda.CodUnic}: {comanda.Descriere}");
+        }
+
+        var codUnicComanda = Console.ReadLine();
+        var comandaMaterie = ComenziMaterie.FirstOrDefault(c => c.CodUnic == codUnicComanda && c.Status == StatusComanda.InAsteptare);
+        var comandaBuchet = Comenzi.FirstOrDefault(c => c.Status == StatusComandaBuchet.AsteptareMaterie);
+        if (comandaMaterie != null)
+        {
+            comandaMaterie.Status = StatusComanda.Finalizat;
+            Console.WriteLine("Comanda de materie preluata.");
+            if(comandaBuchet != null)
+                comandaBuchet.Status = StatusComandaBuchet.InLucru;
+        }
+        else
+        {
+            Console.WriteLine("Comanda de materie nu exista sau este deja finalizata.");
+        }
+    }
     public void MeniuClient()
     {
         Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
@@ -210,13 +260,13 @@ public class Florarie
                 VizualizareIstoricComenzi();
                 break;
             case "3":
-               
+                VizualizareDetaliiComanda();
                 break;
             case "4":
-                
+                //RidicareComanda();
                 break;
             case "5":
-               
+               // ReviewComanda();
                 break;
             case "6":
                 _utilizatorAutentificat = null;
@@ -258,6 +308,22 @@ public class Florarie
         foreach (var comanda in Comenzi.Where(c => c.Client == client))
         {
             Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere} - Status: {comanda.Status}");
+        }
+    }
+    public void VizualizareDetaliiComanda()
+    {
+        Console.Write("Introduceti codul unic al comenzii pentru detalii: ");
+        var codComanda = Console.ReadLine();
+        var comanda = Comenzi.FirstOrDefault(c => c.CodUnic == codComanda && c.Client == _utilizatorAutentificat);
+        if (comanda != null)
+        {
+            Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere}");
+            Console.WriteLine($"Status: {comanda.Status}");
+            Console.WriteLine($"Nume persoana: {comanda.Nume}");
+        }
+        else
+        {
+            Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
         }
     }
 }
