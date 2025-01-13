@@ -375,4 +375,71 @@ public class Florarie
             Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
         }
     }
+    public void RidicareComanda()
+    {
+        Console.Write("Introduceti codul unic al comenzii pentru ridicare: ");
+        var codComanda = Console.ReadLine();
+        var comanda = Comenzi.FirstOrDefault(c => c.CodUnic == codComanda && c.Client == _utilizatorAutentificat);
+        if (comanda != null)
+        {
+            if (comanda.Status == StatusComandaBuchet.Finalizat)
+            {
+                comanda.Status = StatusComandaBuchet.Revendicat;
+                Console.WriteLine("Comanda a fost ridicata cu succes.");
+            }
+            else
+            {
+                Console.WriteLine("Comanda nu este finalizata si nu poate fi ridicata.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
+        }
+    }
+    public void ReviewComanda()
+    {
+        Console.Write("Introduceti codul unic al comenzii pentru review: ");
+        var codComanda = Console.ReadLine();
+        var comanda = Comenzi.FirstOrDefault(c => c.CodUnic == codComanda && c.Client == _utilizatorAutentificat);
+        if (comanda != null)
+        {
+            if (comanda.Status == StatusComandaBuchet.Revendicat)
+            {
+                Console.Write("Introduceti numarul de stele (1-5): ");
+                var stele = int.Parse(Console.ReadLine() ?? "0");
+
+                if (stele < 1 || stele > 5)
+                {
+                    Console.WriteLine("Numar de stele invalid.");
+                }
+                else
+                {
+                    Reviews.Add(new Review
+                        {
+                            Stele=stele,
+                            User=_utilizatorAutentificat as Client,
+                            Data=DateTime.Now
+                        });
+                    Console.WriteLine($"Review-ul a fost adaugat: {stele} stele.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Nu puteti adauga un review decat dupa ridicarea comenzii.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
+        }
+    }
+    private static bool ValidareNumarTelefon(string numarTelefon)
+    {
+        if (numarTelefon.Length == 10 && numarTelefon.StartsWith("07") && numarTelefon.All(char.IsDigit))
+        {
+            return true;
+        }
+        return false;
+    }
 }
