@@ -43,4 +43,125 @@ public class Florarie
         ComenziMaterie.Add(new ComandaMaterie { CodUnic = "1", Descriere = "Flori de trandafir", CodUnicMaterie = "123", Status = StatusComanda.InAsteptare });
         ComenziMaterie.Add(new ComandaMaterie { CodUnic = "2", Descriere = "Frunze de ferigă", CodUnicMaterie = "456", Status = StatusComanda.Finalizat });
     }
+     public void MeniuNeautentificat()
+    {
+        Console.WriteLine("\n[1] Logare\n[2] Adauga Utilizator\n[3] Iesire\n");
+        Console.Write("Alege o optiune: ");
+        var optiune = Console.ReadLine();
+
+        switch (optiune)
+        {
+            case "1":
+                Logare();
+                break;
+            case "2":
+                AdaugaUtilizator();
+                break;
+            case "3":
+                Console.WriteLine("Iesire din aplicatie. La revedere!");
+                Environment.Exit(0);
+                break;
+            default:
+                Console.WriteLine("Optiune invalida!");
+                break;
+        }
+    }
+    public void Logare()
+    {
+        Console.Write("Email: ");
+        var email = Console.ReadLine();
+        Console.Write("Parola: ");
+        var parola = Console.ReadLine();
+
+        var utilizator = Utilizatori.FirstOrDefault(u => u.Email == email && u.Parola == parola);
+
+        if (utilizator != null)
+        {
+            _utilizatorAutentificat = utilizator;
+            Console.WriteLine("Logare reusita!");
+        }
+        else
+        {
+            Console.WriteLine("Email sau parola gresita.");
+        }
+    }
+    public void AdaugaUtilizator()
+    {
+        Console.Write("Tip utilizator (angajat/client): ");
+        var tip = Console.ReadLine()?.ToLower();
+
+        Console.Write("Cod Unic: ");
+        var codUnic = Console.ReadLine();
+
+        Console.Write("Nume: ");
+        var nume = Console.ReadLine();
+
+        Console.Write("Prenume: ");
+        var prenume = Console.ReadLine();
+
+        Console.Write("Email: ");
+        var email = Console.ReadLine();
+        
+        if (Utilizatori.Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+        {
+            Console.WriteLine("Eroare: E-mailul este deja folosit de un alt utilizator.");
+            return;
+        }
+        
+        Console.Write("Parola: ");
+        var parola = Console.ReadLine();
+
+        switch (tip)
+        {
+            case "angajat":
+                Utilizatori.Add(new Angajat
+                {
+                    CodUnic = codUnic, 
+                    Nume = nume, 
+                    Prenume = prenume, 
+                    Email = email, 
+                    Parola = parola
+                });
+                Console.WriteLine("Angajat adaugat cu succes.");
+                break;
+            case "client":
+                Utilizatori.Add(new Client
+                {
+                    CodUnic = codUnic, 
+                    Nume = nume, 
+                    Prenume = prenume, 
+                    Email = email, 
+                    Parola = parola
+                });
+                Console.WriteLine("Client adaugat cu succes.");
+                break;
+            default:
+                Console.WriteLine("Tip utilizator invalid. Incearca din nou.");
+                break;
+        }
+    }
+    public void ComandaBuchet()
+    {
+        Console.Write("Nume persoana pentru care este buchetul: ");
+        var numePersoana = Console.ReadLine();
+        Console.Write("Descriere buchet: ");
+        var descriere = Console.ReadLine();
+        Console.Write("Numarul de telefon: ");
+        var numar = Console.ReadLine();
+       // if (ValidareNumarTelefon(numar))
+       // {
+            Comenzi.Add(new Comanda
+            {
+                CodUnic = $"CMD{Comenzi.Count + 1}",
+                Client = _utilizatorAutentificat as Client,
+                Nume = numePersoana,
+                Telefon = numar,
+                Descriere = descriere,
+                Status = StatusComandaBuchet.InPreluare
+            });
+            Console.WriteLine("Comanda a fost plasata cu succes.");
+       // }
+        //else
+          //  Console.WriteLine("Numar de telefon invalid. Comanda nu a fost plasata.");
+    }
 }
