@@ -245,6 +245,26 @@ public class Florarie
             Console.WriteLine("Comanda de materie nu exista sau este deja finalizata.");
         }
     }
+    public void PreluareComandaBuchet()
+    {
+        Console.WriteLine("Selecteaza comanda de buchet de preluat:"); //bug si aici
+        foreach (var comanda in Comenzi.Where(c => c.Status == StatusComandaBuchet.InPreluare))
+        {
+            Console.WriteLine($"- {comanda.CodUnic}: {comanda.Descriere}");
+        }
+        var codUnicComanda = Console.ReadLine();
+        var comandaBuchet = Comenzi.FirstOrDefault(c => c.CodUnic == codUnicComanda && c.Status == StatusComandaBuchet.InPreluare);
+
+        if (comandaBuchet != null)
+        {
+            comandaBuchet.Status = StatusComandaBuchet.AsteptareMaterie;
+            Console.WriteLine("Comanda de buchet preluata.");
+        }
+        else
+        {
+            Console.WriteLine("Nu exista comenzi de buchet in asteptare.");
+        }
+    }
     public void MeniuClient()
     {
         Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
@@ -301,5 +321,29 @@ public class Florarie
         else
             Console.WriteLine("Numar de telefon invalid. Comanda nu a fost plasata.");
     }
-    
+    public void VizualizareIstoricComenzi()
+    {
+        var client = _utilizatorAutentificat as Client;
+        Console.WriteLine("Istoricul comenzilor tale:");
+        foreach (var comanda in Comenzi.Where(c => c.Client == client))
+        {
+            Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere} - Status: {comanda.Status}");
+        }
+    }
+    public void VizualizareDetaliiComanda()
+    {
+        Console.Write("Introduceti codul unic al comenzii pentru detalii: ");
+        var codComanda = Console.ReadLine();
+        var comanda = Comenzi.FirstOrDefault(c => c.CodUnic == codComanda && c.Client == _utilizatorAutentificat);
+        if (comanda != null)
+        {
+            Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere}");
+            Console.WriteLine($"Status: {comanda.Status}");
+            Console.WriteLine($"Nume persoana: {comanda.Nume}");
+        }
+        else
+        {
+            Console.WriteLine("Comanda nu a fost gasita sau nu apartine dumneavoastra.");
+        }
+    }
 }
