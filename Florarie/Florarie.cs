@@ -140,5 +140,116 @@ public class Florarie
                 break;
         }
     }
+    public void MeniuAutentificat()
+    {
+        Console.WriteLine($"\nBine ai revenit, {_utilizatorAutentificat.Nume} {_utilizatorAutentificat.Prenume}!\n");
+
+        if (_utilizatorAutentificat is Angajat)
+        {
+            MeniuAngajat();
+        }
+        else
+        {
+            MeniuClient();
+        }
+    }
+    public void MeniuAngajat()
+    {
+        Console.WriteLine("[1] Vizualizare comenzi buchete\n[2] Comanda materie pentru buchete\n[3] Preluare materie pentru buchete\n[4] Preluare comanda buchet\n[5] Finalizare comanda buchet\n[6] Vizualizare reviews\n[7] Iesire din cont");
+        Console.Write("Alege o optiune: ");
+        var optiune = Console.ReadLine();
+
+        switch (optiune)
+        {
+            case "1":
+                VizualizareComenzi();
+                break;
+            case "2":
+                ComandaMaterieBuchet();
+                break;
+            case "3":
+                PreluareComandaMaterie();
+                break;
+            case "4":
+                PreluareComandaBuchet();
+                break;
+            case "5":
+                FinalizareComanda();
+                break;
+            case "6":
+                VizualizareReview();
+                break;
+            case "7":
+                _utilizatorAutentificat = null;
+                Console.WriteLine("Te-ai delogat cu succes.");
+                break;
+            default:
+                Console.WriteLine("Optiune invalida!");
+                break;
+        }
+    }
+    public void VizualizareComenzi()
+    {
+        foreach (var comanda in Comenzi)
+        {
+            Console.WriteLine($"Comanda {comanda.CodUnic}: {comanda.Descriere} - Status: {comanda.Status}");
+        }
+    }
+    public void MeniuClient()
+    {
+        Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
+        Console.Write("Alege o optiune: ");
+        var optiune = Console.ReadLine();
+
+        switch (optiune)
+        {
+            case "1":
+                ComandaBuchet();
+                break;
+            case "2":
+                VizualizareIstoricComenzi();
+                break;
+            case "3":
+                VizualizareDetaliiComanda();
+                break;
+            case "4":
+                RidicareComanda();
+                break;
+            case "5":
+                ReviewComanda();
+                break;
+            case "6":
+                _utilizatorAutentificat = null;
+                Console.WriteLine("Te-ai delogat cu succes.");
+                break;
+            default:
+                Console.WriteLine("Optiune invalida!");
+                break;
+        }
+    }
+    public void ComandaBuchet()
+    {
+        Console.Write("Nume persoana pentru care este buchetul: ");
+        var numePersoana = Console.ReadLine();
+        Console.Write("Descriere buchet: ");
+        var descriere = Console.ReadLine();
+        Console.Write("Numarul de telefon: ");
+        var numar = Console.ReadLine();
+        if (ValidareNumarTelefon(numar))
+        {
+            Comenzi.Add(new Comanda
+            {
+                CodUnic = $"CMD{Comenzi.Count + 1}",
+                Client = _utilizatorAutentificat as Client,
+                Nume = numePersoana,
+                Telefon = numar,
+                Descriere = descriere,
+                Status = StatusComandaBuchet.InPreluare
+            });
+            Console.WriteLine("Comanda a fost plasata cu succes.");
+        }
+        else
+            Console.WriteLine("Numar de telefon invalid. Comanda nu a fost plasata.");
+    }
     
 }
