@@ -140,6 +140,38 @@ public class Florarie
                 break;
         }
     }
+    public void MeniuClient()
+    {
+        Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
+        Console.Write("Alege o optiune: ");
+        var optiune = Console.ReadLine();
+
+        switch (optiune)
+        {
+            case "1":
+                ComandaBuchet();
+                break;
+            case "2":
+              
+                break;
+            case "3":
+               
+                break;
+            case "4":
+                
+                break;
+            case "5":
+               
+                break;
+            case "6":
+                _utilizatorAutentificat = null;
+                Console.WriteLine("Te-ai delogat cu succes.");
+                break;
+            default:
+                Console.WriteLine("Optiune invalida!");
+                break;
+        }
+    }
     public void ComandaBuchet()
     {
         Console.Write("Nume persoana pentru care este buchetul: ");
