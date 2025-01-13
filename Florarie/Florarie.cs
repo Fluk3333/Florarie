@@ -287,6 +287,13 @@ public class Florarie
             Console.WriteLine("Nu exista comenzi de buchet in asteptare.");
         }
     }
+    public void VizualizareReview()
+    {
+        foreach (var review in Reviews)
+        {
+            Console.WriteLine($"{_utilizatorAutentificat.Nume} {_utilizatorAutentificat.Prenume} a lasat un review de {review.Stele} stele in data de {review.Data}");
+        }
+    }
     public void MeniuClient()
     {
         Console.WriteLine("[1] Comanda buchet\n[2] Vizualizare istoric comenzi\n[3] Vizualizare detalii comanda\n[4] Ridicare comanda\n[5] Review comanda\n[6] Iesire din cont");
