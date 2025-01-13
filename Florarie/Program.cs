@@ -1,4 +1,4 @@
-﻿namespace Florarie;
+namespace Florarie;
 
 class Program
 {
@@ -19,5 +19,4 @@ class Program
             }
         }
     }
-    
 }

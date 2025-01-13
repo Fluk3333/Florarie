@@ -1,4 +1,4 @@
-﻿namespace Florarie;
+namespace Florarie;
 
 public class Florarie
 {
